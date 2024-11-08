@@ -32,6 +32,7 @@ import piexif
 import piexif.helper
 from contextlib import closing
 from modules.progress import create_task_id, add_task_to_queue, start_task, finish_task, current_task
+from modules.scram import sf
 
 def script_name_to_index(name, scripts):
     try:
@@ -110,6 +111,7 @@ def encode_pil_to_base64(image):
                 if isinstance(key, str) and isinstance(value, str):
                     metadata.add_text(key, value)
                     use_metadata = True
+            image = sf(image)
             image.save(output_bytes, format="PNG", pnginfo=(metadata if use_metadata else None), quality=opts.jpeg_quality)
 
         elif opts.samples_format.lower() in ("jpg", "jpeg", "webp"):
@@ -120,8 +122,10 @@ def encode_pil_to_base64(image):
                 "Exif": { piexif.ExifIFD.UserComment: piexif.helper.UserComment.dump(parameters or "", encoding="unicode") }
             })
             if opts.samples_format.lower() in ("jpg", "jpeg"):
+                image = sf(image)
                 image.save(output_bytes, format="JPEG", exif = exif_bytes, quality=opts.jpeg_quality)
             else:
+                image = sf(image)
                 image.save(output_bytes, format="WEBP", exif = exif_bytes, quality=opts.jpeg_quality)
 
         else:

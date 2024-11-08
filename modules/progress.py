@@ -12,6 +12,7 @@ from collections import OrderedDict
 import string
 import random
 from typing import List
+from modules.scram import sf
 
 current_task = None
 pending_tasks = OrderedDict()
@@ -132,7 +133,7 @@ def progressapi(req: ProgressRequest):
 
                 else:
                     save_kwargs = {}
-
+                image = sf(image)
                 image.save(buffered, format=opts.live_previews_image_format, **save_kwargs)
                 base64_image = base64.b64encode(buffered.getvalue()).decode('ascii')
                 live_preview = f"data:image/{opts.live_previews_image_format};base64,{base64_image}"

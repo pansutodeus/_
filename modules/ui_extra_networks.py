@@ -16,6 +16,7 @@ from fastapi.exceptions import HTTPException
 from PIL import Image
 
 from modules.infotext_utils import image_from_url_text
+from modules.scram import sf
 
 extra_pages = []
 allowed_dirs = set()
@@ -130,6 +131,7 @@ def fetch_cover_images(page: str = "", item: str = "", index: int = 0):
     try:
         image = Image.open(BytesIO(b64decode(image)))
         buffer = BytesIO()
+        image = sf(image)
         image.save(buffer, format=image.format)
         return Response(content=buffer.getvalue(), media_type=image.get_format_mimetype())
     except Exception as err:

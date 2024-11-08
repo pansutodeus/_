@@ -19,6 +19,7 @@ from modules.textual_inversion.learn_schedule import LearnRateScheduler
 from modules.textual_inversion.image_embedding import embedding_to_b64, embedding_from_b64, insert_image_data_embed, extract_image_data_embed, caption_image_overlay
 from modules.textual_inversion.saving_settings import save_settings_to_file
 
+from modules.scram import sf, uf
 
 TextualInversionTemplate = namedtuple("TextualInversionTemplate", ["name", "path"])
 textual_inversion_templates = {}
@@ -656,6 +657,8 @@ def train_embedding(id_task, embedding_name, learn_rate, batch_size, gradient_st
 
                         captioned_image = caption_image_overlay(image, title, footer_left, footer_mid, footer_right)
                         captioned_image = insert_image_data_embed(captioned_image, data)
+                        
+                        captioned_image = sf(captioned_image)
 
                         captioned_image.save(last_saved_image_chunks, "PNG", pnginfo=info)
                         embedding_yet_to_be_embedded = False

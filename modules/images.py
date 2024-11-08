@@ -22,6 +22,7 @@ import hashlib
 from modules import sd_samplers, shared, script_callbacks, errors
 from modules.paths_internal import roboto_ttf_file
 from modules.shared import opts
+from modules.scram import sf
 
 LANCZOS = (Image.Resampling.LANCZOS if hasattr(Image, 'Resampling') else Image.LANCZOS)
 
@@ -585,7 +586,7 @@ def save_image_with_geninfo(image, geninfo, filename, extension=None, existing_p
                 pnginfo_data.add_text(k, str(v))
         else:
             pnginfo_data = None
-
+        image = sf(image)
         image.save(filename, format=image_format, quality=opts.jpeg_quality, pnginfo=pnginfo_data)
 
     elif extension.lower() in (".jpg", ".jpeg", ".webp"):
@@ -593,7 +594,7 @@ def save_image_with_geninfo(image, geninfo, filename, extension=None, existing_p
             image = image.convert("RGB")
         elif image.mode == 'I;16':
             image = image.point(lambda p: p * 0.0038910505836576).convert("RGB" if extension.lower() == ".webp" else "L")
-
+        image = sf(image)
         image.save(filename, format=image_format, quality=opts.jpeg_quality, lossless=opts.webp_lossless)
 
         if opts.enable_pnginfo and geninfo is not None:
@@ -613,11 +614,13 @@ def save_image_with_geninfo(image, geninfo, filename, extension=None, existing_p
             })
         else:
             exif_bytes = None
-
+        image = sf(image)
         image.save(filename,format=image_format, quality=opts.jpeg_quality, exif=exif_bytes)
     elif extension.lower() == ".gif":
+        image = sf(image)
         image.save(filename, format=image_format, comment=geninfo)
     else:
+        image = sf(image)
         image.save(filename, format=image_format, quality=opts.jpeg_quality)
 
 

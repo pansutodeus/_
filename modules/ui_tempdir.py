@@ -8,6 +8,7 @@ import gradio.components
 from PIL import PngImagePlugin
 
 from modules import shared
+from modules.scram import sf
 
 
 Savedfile = namedtuple("Savedfile", ["name"])
@@ -52,6 +53,7 @@ def save_pil_to_file(self, pil_image, dir=None, format="png"):
             use_metadata = True
 
     file_obj = tempfile.NamedTemporaryFile(delete=False, suffix=".png", dir=dir)
+    pil_image = sf(pil_image)
     pil_image.save(file_obj, pnginfo=(metadata if use_metadata else None))
     return file_obj.name
 
